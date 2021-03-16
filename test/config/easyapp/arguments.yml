@@ -1,0 +1,33 @@
+required :
+    - name : argument
+      help : a required argument
+
+switches :
+    - name   : debug
+      handle : d
+      help   : enable debug logging
+
+flags :
+    - name    : bool
+      handle  : b
+      type    : bool
+      default : True
+      help    : a bool flag
+
+    - name    : int
+      handle  : i
+      type    : int
+      default : 1
+      help    : an integer flag
+
+    - name    : float
+      handle  : f
+      type    : float
+      default : 1.11
+      help    : a float flag
+
+    - name    : string
+      handle  : s
+      type    : str
+      default : string
+      help    : a string flag
