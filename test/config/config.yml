@@ -1,1 +1,9 @@
-configuration: config
+version: v1
+operations:
+    sum:
+        - addends:
+              - 2
+              - 2
+    division:
+        - dividend: 10
+          divisor: 2

@@ -1,6 +1,6 @@
 required :
-    - name : argument
-      help : a required argument
+    - name : operations
+      help : the operations to run
 
 switches :
     - name   : debug
@@ -8,26 +8,8 @@ switches :
       help   : enable debug logging
 
 flags :
-    - name    : bool
-      handle  : b
-      type    : bool
-      default : True
-      help    : a bool flag
-
-    - name    : int
-      handle  : i
+    - name    : max
+      handle  : m
       type    : int
-      default : 1
-      help    : an integer flag
-
-    - name    : float
-      handle  : f
-      type    : float
-      default : 1.11
-      help    : a float flag
-
-    - name    : string
-      handle  : s
-      type    : str
-      default : string
-      help    : a string flag
+      default : -1
+      help    : maximum number of operations

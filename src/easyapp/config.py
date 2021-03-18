@@ -1,8 +1,11 @@
-import enum
+from __future__ import annotations
+
 import logging
 import pathlib
+import typing
 
 import confuse
+from ruamel import yaml
 
 import easyapp.utils.path as path
 
@@ -10,53 +13,95 @@ import easyapp.utils.path as path
 logger = logging.getLogger(__name__)
 
 
-class ConfigFiles(enum.Enum):
-    #yapf: disable
-    INFO      = enum.auto()
-    ARGUMENTS = enum.auto()
-    CONFIGS   = enum.auto()
-    #yapf: enable
+class ConfigFile:
+
+    def __init__(self, path: pathlib.Path):
+        self.path = path
+
+    def __getitem__(self, key: str) -> typing.Any:
+        get_view = key[0] == "/"
+
+        if get_view:
+            key = key[1:]
+
+        parts = key.split("/")
+
+        value = self.__view[parts[0]]
+        for part in parts[1:]:
+            value = value[part]
+
+        return value if get_view else value.get()
+
+    def __setitem__(self, key: str, item: typing.Any):
+        self[f"/{key}"].set(item)
+
+    @property
+    def path(self) -> pathlib.Path:
+        return self.__path
+
+    @path.setter
+    def path(self, value: pathlib.Path) -> None:
+        self.__path = pathlib.Path(value)
+
+        self.__view = confuse.LazyConfig("")
+        self.load()
+
+    def load(self) -> None:
+        logger.debug(f"loading from configuration file \"{path.shorten_path(self.path)}\"")
+
+        self.__view.set_file(self.path)
+
+    def save(self) -> None:
+        logger.debug(f"saving to configuration file \"{path.shorten_path(self.path)}\"")
+
+        with self.path.open("w") as file:
+            parser = yaml.YAML(typ="safe")
+            data = parser.load(self.__view.dump())
+
+            parser = yaml.YAML()
+            parser.default_flow_style = False
+            parser.indent(mapping=4, sequence=6, offset=4)
+
+            parser.dump(data, file)
+
+    def refresh(self) -> None:
+        self.save()
+        self.load()
 
 
 class ConfigManager:
 
-    #yapf: disable
-    FILEPATHS = {
-        ConfigFiles.INFO      : path.cwd_path("config/easyapp/info.yml"),
-        ConfigFiles.ARGUMENTS : path.cwd_path("config/easyapp/arguments.yml"),
-        ConfigFiles.CONFIGS   : {}
-    }
-    #yapf: enable
-
     def __init__(self) -> None:
         #yapf: disable
-        self.info      = None
-        self.arguments = None
-        self.configs   = {}
+        self.info      = ConfigFile(path.cwd_path("config/easyapp/info.yml"))
+        self.arguments = ConfigFile(path.cwd_path("config/easyapp/arguments.yml"))
+        self.configs   = self.__find_configs()
         #yapf: enable
 
-        self.__find_configs()
-        self.__load_configs()
+        #self.__find_configs()
 
-    def __find_configs(self) -> None:
+    def __getitem__(self, key: str):
+        return self.configs[key]
+
+    @property
+    def configs(self) -> dict[str, ConfigFile]:
+        return self.__configs
+
+    @configs.setter
+    def configs(self, value: dict[str, ConfigFile]):
+        self.__configs = value
+
+    def __find_configs(self) -> dict[str, ConfigFile]:
         dir = pathlib.Path("config")
-        configs = sorted(dir.glob("*.yml"))
+        files = sorted(dir.glob("*.yml"))
 
-        logger.debug(f"found {len(configs)} config file(s)")
+        logger.debug(f"found {len(files)} user config file(s)")
 
-        for config in configs:
-            self.FILEPATHS[ConfigFiles.CONFIGS][config.stem] = path.cwd_path(config)
+        configs = {}
+        for config in files:
+            configs[config.stem] = ConfigFile(path.cwd_path(config))
 
-    def __load_configs(self) -> None:
-        self.info = confuse.LazyConfig("")
-        self.arguments = confuse.LazyConfig("")
-
-        self.info.set_file(self.FILEPATHS[ConfigFiles.INFO])
-        self.arguments.set_file(self.FILEPATHS[ConfigFiles.ARGUMENTS])
-
-        for config in self.FILEPATHS[ConfigFiles.CONFIGS]:
-            self.configs[config] = confuse.LazyConfig("")
-            self.configs[config].set_file(self.FILEPATHS[ConfigFiles.CONFIGS][config])
+        return configs
 
 
 manager = ConfigManager()

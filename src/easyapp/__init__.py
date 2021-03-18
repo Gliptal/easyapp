@@ -23,9 +23,9 @@ def __log_status():
     import logging
 
     #yapf: disable
-    app_name        = easyapp.config.manager.info['name'].get()
-    app_version     = easyapp.config.manager.info['version'].get()
-    easyapp_version = importlib.metadata.version('easyapp-gliptal')
+    app_name        = easyapp.config.manager.info["name"]
+    app_version     = easyapp.config.manager.info["version"]
+    easyapp_version = importlib.metadata.version("easyapp-gliptal")
     #yapf: enable
 
     logger = logging.getLogger(__name__)

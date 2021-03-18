@@ -1,3 +1,3 @@
 @ECHO OFF
 
-py "test.py" argument -d %*
+py "calculator.py" all -d %*

@@ -30,16 +30,16 @@ class CommandlineParser:
         return args
 
     def __add_info(self) -> None:
-        self.__parser.description = config.info["pitch"].get()    #type: ignore
-        self.__parser.epilog = config.info["description"].get()    #type: ignore
+        self.__parser.description = config.info["pitch"]
+        self.__parser.epilog = config.info["description"]
 
-        self.__parser.add_argument("-v", "--version", action="version", version=config.info["version"].get())    #type: ignore
+        self.__parser.add_argument("-v", "--version", action="version", version=config.info["version"])
 
     def __add_required(self) -> None:
         group = self.__parser.add_argument_group()
 
         try:
-            for argument in config.arguments["required"].get():    #type: ignore
+            for argument in config.arguments["required"]:
                 group.add_argument(argument["name"], help=argument["help"])
         except confuse.exceptions.NotFoundError:
             pass
@@ -48,7 +48,7 @@ class CommandlineParser:
         group = self.__parser.add_argument_group()
 
         try:
-            for argument in config.arguments["switches"].get():    #type: ignore
+            for argument in config.arguments["switches"]:
                 group.add_argument(f"-{argument['handle']}", f"--{argument['name']}", action="store_true", help=argument["help"])
         except confuse.exceptions.NotFoundError:
             pass
@@ -57,7 +57,7 @@ class CommandlineParser:
         group = self.__parser.add_argument_group()
 
         try:
-            for argument in config.arguments["flags"].get():    #type: ignore
+            for argument in config.arguments["flags"]:
                 type = globals()["__builtins__"][argument["type"]]
                 group.add_argument(f"-{argument['handle']}", f"--{argument['name']}", type=type, default=argument["default"], help=argument["help"])
         except confuse.exceptions.NotFoundError:
