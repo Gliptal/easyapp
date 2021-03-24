@@ -6,7 +6,7 @@ formatters :
         datefmt : "%H:%M:%S"
         style   : "{"
     short :
-        format  : "{levelname:8s} {name:16s} : {message}"
+        format  : "{levelname:8s} {name:20s} : {message}"
         style   : "{"
 
 handlers :

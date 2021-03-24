@@ -45,11 +45,11 @@ class Calculator(unittest.TestCase):
 
             if operation == "sum":
                 for op in config["operations/sum"]:
-                    self.assertEqual(sum(op['addends']), 4)
+                    self.assertEqual(sum(op['addends']), 2 + 2)
 
             if operation == "division":
                 for op in config["operations/division"]:
-                    self.assertEqual(op['dividend'] / op['divisor'], 5)
+                    self.assertEqual(op['dividend'] / op['divisor'], 10 / 2)
 
 
 if __name__ == "__main__":

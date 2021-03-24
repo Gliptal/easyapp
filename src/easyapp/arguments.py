@@ -1,7 +1,7 @@
 import argparse
 import logging
 
-import confuse
+import confuse.exceptions
 
 from easyapp.config import manager as config
 
