@@ -1,6 +1,7 @@
 required :
-    - name : operations
-      help : the operations to run
+    - name   : operations
+      values : ["all", "sum", "division"]
+      help   : the operations to run
 
 switches :
     - name   : debug

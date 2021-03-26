@@ -27,6 +27,11 @@ class CommandlineParser:
 
         logger.debug(f"parsed options {args}")
 
+        for required in config.arguments["required"]:
+            option = getattr(args, required['name'])
+            if option not in required["values"]:
+                raise argparse.ArgumentTypeError(f"\"{option}\" is not an accepted option for required argument \"{required['name']}\"")
+
         return args
 
     def __add_info(self) -> None:
