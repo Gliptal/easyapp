@@ -18,12 +18,12 @@ class LogManager:
         return self.__debug
 
     @debug.setter
-    def debug(self, value: bool) -> None:
+    def debug(self, value: bool):
         self.__debug = value
 
         for handler in logging.getLogger().handlers:
-            level = logging.DEBUG if self.__debug else logging.INFO
-            handler.setLevel(level)
+            if self.__debug:
+                handler.setLevel(logging.DEBUG)
 
     def __configure(self) -> None:
         with self.FILEPATH.open() as file:

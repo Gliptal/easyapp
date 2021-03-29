@@ -40,7 +40,7 @@ class ConfigFile:
         return self.__path
 
     @path.setter
-    def path(self, value: pathlib.Path) -> None:
+    def path(self, value: pathlib.Path):
         self.__path = pathlib.Path(value)
 
         self.__view = confuse.LazyConfig("")
@@ -64,7 +64,7 @@ class ConfigFile:
 
             parser.dump(data, file)
 
-    def refresh(self) -> None:
+    def reload(self) -> None:
         self.save()
         self.load()
 

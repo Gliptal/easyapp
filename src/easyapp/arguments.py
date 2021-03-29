@@ -28,9 +28,12 @@ class CommandlineParser:
         logger.debug(f"parsed options {args}")
 
         for required in config.arguments["required"]:
-            option = getattr(args, required['name'])
-            if option not in required["values"]:
-                raise argparse.ArgumentTypeError(f"\"{option}\" is not an accepted option for required argument \"{required['name']}\"")
+            try:
+                option = getattr(args, required['name'])
+                if option not in required["values"]:
+                    raise argparse.ArgumentTypeError(f"\"{option}\" is not an accepted option for required argument \"{required['name']}\"")
+            except KeyError:
+                pass
 
         return args
 
@@ -45,7 +48,8 @@ class CommandlineParser:
 
         try:
             for argument in config.arguments["required"]:
-                group.add_argument(argument["name"], help=argument["help"])
+                type = globals()["__builtins__"][argument["type"]]
+                group.add_argument(argument["name"], type=type, help=argument["help"])
         except confuse.exceptions.NotFoundError:
             pass
 

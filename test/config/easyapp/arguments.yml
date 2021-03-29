@@ -1,7 +1,11 @@
 required :
-    - name   : operations
-      values : ["all", "sum", "division"]
-      help   : the operations to run
+    - name   : value
+      type   : int
+      help   :
+    - name   : mode
+      type   : str
+      values : ["precise", "approximate"]
+      help   :
 
 switches :
     - name   : debug
@@ -9,8 +13,8 @@ switches :
       help   : enable debug logging
 
 flags :
-    - name    : max
-      handle  : m
+    - name    : limit
+      handle  : l
       type    : int
-      default : -1
-      help    : maximum number of operations
+      default : 100
+      help    :
