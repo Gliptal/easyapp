@@ -18,6 +18,8 @@ class ConfigFile:
     def __init__(self, path: pathlib.Path):
         self.path = path
 
+        self.lazy = False
+
     def __getitem__(self, key: str) -> typing.Any:
         get_view = key[0] == "/"
 
@@ -34,6 +36,9 @@ class ConfigFile:
 
     def __setitem__(self, key: str, item: typing.Any):
         self[f"/{key}"].set(item)
+
+        if not self.lazy:
+            self.save()
 
     @property
     def path(self) -> pathlib.Path:
@@ -78,7 +83,7 @@ class ConfigManager:
         self.configs   = self.__find_configs()
         #yapf: enable
 
-        #self.__find_configs()
+        self.lazy = False
 
     def __getitem__(self, key: str):
         return self.configs[key]
@@ -91,6 +96,17 @@ class ConfigManager:
     def configs(self, value: dict[str, ConfigFile]):
         self.__configs = value
 
+    @property
+    def lazy(self) -> bool:
+        return self.__lazy
+
+    @lazy.setter
+    def lazy(self, value: bool):
+        self.__lazy = value
+
+        for config in self.configs.values():
+            config.lazy = self.__lazy
+
     def __find_configs(self) -> dict[str, ConfigFile]:
         dir = pathlib.Path("config")
         files = sorted(dir.glob("*.yml"))
@@ -102,6 +118,3 @@ class ConfigManager:
             configs[config.stem] = ConfigFile(path.cwd_path(config))
 
         return configs
-
-
-manager = ConfigManager()

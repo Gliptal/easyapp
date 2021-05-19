@@ -1,34 +1,30 @@
 import logging
 import logging.config
+from pathlib import Path
 
 from ruamel import yaml
 
-import easyapp.utils.path as path
+import easyapp.exceptions
+from easyapp.utils.path import cwd_path
 
 
-class LogManager:
+def __configure():
+    path = Path("config/easyapp")
+    name = Path("logging.yml")
 
-    FILEPATH = path.cwd_path("config/easyapp/logging.yml")
-
-    def __init__(self):
-        self.__configure()
-
-    @property
-    def debug(self) -> bool:
-        return self.__debug
-
-    @debug.setter
-    def debug(self, value: bool):
-        self.__debug = value
-
-        for handler in logging.getLogger().handlers:
-            if self.__debug:
-                handler.setLevel(logging.DEBUG)
-
-    def __configure(self) -> None:
-        with self.FILEPATH.open() as file:
+    try:
+        with cwd_path(path / name).open() as file:
             config = yaml.safe_load(file)
             logging.config.dictConfig(config)
+    except FileNotFoundError as error:
+        message = f"no config file {name} found in {cwd_path(path)}"
+        raise easyapp.exceptions.MissingConfig(message) from error
 
 
-manager = LogManager()
+def debug(active: bool):
+    if active:
+        for handler in logging.getLogger().handlers:
+            handler.setLevel(logging.DEBUG)
+
+
+__configure()

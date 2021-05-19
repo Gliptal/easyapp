@@ -2,4 +2,4 @@
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 CD test
-py "factorial.py" 10 approximate -d %*
+py "factorial.py" 6 precise -d %*
