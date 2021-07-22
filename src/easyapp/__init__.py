@@ -25,7 +25,10 @@ def __init():
     #yapf: disable
     app_name        = config.info["name"]
     app_version     = config.info["version"]
-    easyapp_version = importlib.metadata.version("easyapp-gliptal")
+    try:
+        easyapp_version = importlib.metadata.version("easyapp")
+    except importlib.metadata.PackageNotFoundError:
+        easyapp_version = "0.1.0"
     #yapf: enable
 
     logger = logging.getLogger(__name__)
