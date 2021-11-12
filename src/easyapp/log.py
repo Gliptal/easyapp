@@ -27,4 +27,11 @@ def debug(active: bool):
             handler.setLevel(logging.DEBUG)
 
 
+def suppress(name: str):
+    for handler in logging.getLogger().handlers:
+        if handler.get_name() == name:
+            logging.getLogger().removeHandler(handler)
+            break
+
+
 __configure()

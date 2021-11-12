@@ -13,6 +13,7 @@ import easyapp.utils.path as path
 logger = logging.getLogger(__name__)
 
 
+# TODO support config files in packaging
 class ConfigFile:
 
     def __init__(self, path: pathlib.Path):

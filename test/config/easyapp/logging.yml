@@ -2,11 +2,11 @@ version : 1
 
 formatters :
     all :
-        format  : "{asctime:12s} {levelname:8s} {name:20s} : {message}"
+        format  : "{asctime:12s} {levelname:8s} {name:24s} : {message}"
         datefmt : "%H:%M:%S"
         style   : "{"
     short :
-        format  : "{levelname:8s} {name:20s} : {message}"
+        format  : "{levelname:8s} {name:24s} : {message}"
         style   : "{"
 
 handlers :
