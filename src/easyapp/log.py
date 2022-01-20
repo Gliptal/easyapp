@@ -8,6 +8,9 @@ import easyapp.exceptions
 from easyapp.utils.path import cwd_path
 
 
+__handlers = {}
+
+
 def __configure():
     path = Path("config/easyapp")
     name = Path("logging.yml")
@@ -30,8 +33,13 @@ def debug(active: bool):
 def suppress(name: str):
     for handler in logging.getLogger().handlers:
         if handler.get_name() == name:
+            __handlers[name] = handler
             logging.getLogger().removeHandler(handler)
             break
+
+
+def recover(name: str):
+    logging.getLogger().addHandler(__handlers[name])
 
 
 __configure()

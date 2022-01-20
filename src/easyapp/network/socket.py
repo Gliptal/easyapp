@@ -41,7 +41,7 @@ class UdpReceiver:
 
     def __enter__(self):
         logger.debug(f"opening {self.blocking.name.lower()} UDP socket on {self.address.ip}:{self.address.port} ({self.timeout}s timeout)")
-        self.socket.bind((self.address.ip, self.address.port))
+        self.socket.bind((str(self.address.ip), self.address.port))
 
         return self
 
