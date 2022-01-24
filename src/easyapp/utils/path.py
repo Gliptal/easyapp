@@ -13,6 +13,10 @@ def cwd_path(path: pathlib.Path | str) -> pathlib.Path:
     return pathlib.Path.cwd() / pathlib.Path(path)
 
 
+def is_frozen():
+    return getattr(sys, "frozen", False)
+
+
 def __get_cwd() -> pathlib.Path:
     try:
         return pathlib.Path(sys._MEIPASS)    #type: ignore

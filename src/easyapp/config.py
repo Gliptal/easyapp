@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import pathlib
+import sys
 import typing
 
 import confuse
@@ -53,12 +54,12 @@ class ConfigFile:
         self.load()
 
     def load(self) -> None:
-        logger.debug(f"loading from configuration file \"{path.shorten_path(self.path)}\"")
+        logger.debug(f"loading from configuration file \"{self.path}\"")
 
         self.__view.set_file(self.path)
 
     def save(self) -> None:
-        logger.debug(f"saving to configuration file \"{path.shorten_path(self.path)}\"")
+        logger.debug(f"saving to configuration file \"{self.path}\"")
 
         with self.path.open("w") as file:
             parser = yaml.YAML(typ="safe")
@@ -109,7 +110,11 @@ class ConfigManager:
             config.lazy = self.__lazy
 
     def __find_configs(self) -> dict[str, ConfigFile]:
-        dir = pathlib.Path("config")
+        if path.is_frozen():
+            dir = pathlib.Path(sys.executable).parent
+        else:
+            dir = pathlib.Path("config")
+
         files = sorted(dir.glob("*.yml"))
 
         logger.debug(f"found {len(files)} user config file(s)")

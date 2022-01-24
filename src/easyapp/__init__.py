@@ -28,7 +28,7 @@ def __init():
     try:
         easyapp_version = importlib.metadata.version("easyapp")
     except importlib.metadata.PackageNotFoundError:
-        easyapp_version = "0.1.0"
+        easyapp_version = "0.2.0"
     #yapf: enable
 
     logger = logging.getLogger(__name__)

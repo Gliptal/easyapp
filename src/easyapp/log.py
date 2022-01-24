@@ -5,23 +5,23 @@ from pathlib import Path
 from ruamel import yaml
 
 import easyapp.exceptions
-from easyapp.utils.path import cwd_path
+import easyapp.utils.path as path
 
 
 __handlers = {}
 
 
 def __configure():
-    path = Path("config/easyapp")
-    name = Path("logging.yml")
-
     try:
-        with cwd_path(path / name).open() as file:
+        with path.cwd_path(Path("config/easyapp/logging.yml")).open() as file:
             config = yaml.safe_load(file)
+
+            if path.is_frozen():
+                config["handlers"]["file"]["filename"] = "log.log"
+
             logging.config.dictConfig(config)
     except FileNotFoundError as error:
-        message = f"no config file {name} found in {cwd_path(path)}"
-        raise easyapp.exceptions.MissingConfig(message) from error
+        raise easyapp.exceptions.MissingConfig from error
 
 
 def debug(active: bool):
