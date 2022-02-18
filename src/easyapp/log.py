@@ -17,7 +17,8 @@ def __configure():
             config = yaml.safe_load(file)
 
             if path.is_frozen():
-                config["handlers"]["file"]["filename"] = "log.log"
+                if "file" in config["handlers"]:
+                    config["handlers"]["file"]["filename"] = "log.log"
 
             logging.config.dictConfig(config)
     except FileNotFoundError as error:

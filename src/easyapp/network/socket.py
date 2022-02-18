@@ -25,27 +25,15 @@ class BlockingMode(enum.Enum):
     # yapf: enable
 
 
-class UdpReceiver:
+class UdpSocket:
 
-    def __init__(self, address: Address, blocking: BlockingMode = BlockingMode.NON_BLOCKING, timeout: float = 1.0, size: int = 1024 * 128):
+    def __init__(self, address: Address):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         self.address = address
-        self.blocking = blocking
-        self.timeout = timeout
-        self.size = size
 
-    def __del__(self):
+    def __exit__(self, evalue=None, etype=None, traceback=None):    # type: ignore
         logger.debug(f"closing UDP socket on {self.address.ip}:{self.address.port}")
-        self.socket.close()
-
-    def __enter__(self):
-        logger.debug(f"opening {self.blocking.name.lower()} UDP socket on {self.address.ip}:{self.address.port} ({self.timeout}s timeout)")
-        self.socket.bind((str(self.address.ip), self.address.port))
-
-        return self
-
-    def __exit__(self, etype: BaseException, eval: BaseException, traceback: types.TracebackType):
         self.socket.close()
 
     @property
@@ -55,6 +43,41 @@ class UdpReceiver:
     @address.setter
     def address(self, value: Address):
         self.__address = value
+
+
+class UdpSender(UdpSocket):
+
+    def __enter__(self):
+        logger.debug(f"opening UDP socket on {self.address.ip}:{self.address.port}")
+        self.socket.connect(((str(self.address.ip), self.address.port)))
+
+        return self
+
+    @property
+    def buffer(self) -> bytes:
+        return self.__buffer
+
+    @buffer.setter
+    def buffer(self, data: bytes):
+        self.__buffer = data
+
+        self.socket.send(data)
+
+
+class UdpReceiver(UdpSocket):
+
+    def __init__(self, address: Address, blocking: BlockingMode = BlockingMode.NON_BLOCKING, timeout: float = 1.0, size: int = 1024 * 128):
+        super().__init__(address)
+
+        self.blocking = blocking
+        self.timeout = timeout
+        self.size = size
+
+    def __enter__(self):
+        logger.debug(f"opening {self.blocking.name.lower()} UDP socket on {self.address.ip}:{self.address.port} ({self.timeout}s timeout)")
+        self.socket.bind((str(self.address.ip), self.address.port))
+
+        return self
 
     @property
     def blocking(self) -> BlockingMode:
