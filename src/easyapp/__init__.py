@@ -4,6 +4,7 @@ import easyapp.arguments
 import easyapp.config
 
 
+INFO = None
 ARGS = None
 CONFIGS = None
 
@@ -15,8 +16,10 @@ def __init():
     config = easyapp.config.ConfigManager()
     arguments = easyapp.arguments.CommandlineParser(config)
 
+    global INFO
     global ARGS
     global CONFIGS
+    INFO = config.info
     ARGS = arguments.args
     CONFIGS = config.configs
 
@@ -28,7 +31,7 @@ def __init():
     try:
         easyapp_version = importlib.metadata.version("easyapp")
     except importlib.metadata.PackageNotFoundError:
-        easyapp_version = "0.2.0"
+        easyapp_version = "0.3.0"
     #yapf: enable
 
     logger = logging.getLogger(__name__)
