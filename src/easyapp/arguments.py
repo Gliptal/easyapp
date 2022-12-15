@@ -14,7 +14,7 @@ class CommandlineParser:
     def __init__(self, config: easyapp.config.ConfigManager):
         self.__config = config
 
-        self.__parser = argparse.ArgumentParser()
+        self.__parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 
         self.__add_info()
         self.__add_required()
